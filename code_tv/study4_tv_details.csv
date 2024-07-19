@@ -1,0 +1,21 @@
+ppt_id,date,tvcount,tv1 location,tv1 exclude,tv1 notes,tv2 location,tv2 exclude,tv2 notes
+567,2023-01-28,1,Living room,TRUE,excluded cause of time sync issues,None,None,None
+568,2023-02-07,2,Living room,FALSE,None,Dining room,FALSE,None
+577,2023-03-23,1,Living room,FALSE,None,None,None,None
+578,2023-03-25,2,Living room,FALSE,None,Play room,FALSE,None
+579,2023-03-22,1,Living room,FALSE,None,None,None,None
+580,2023-04-05,1,Living room,FALSE,None,None,None,None
+581,2023-04-12,2,Living room,FALSE,None,Child bedroom,FALSE,None
+582,2023-04-29,2,Child bedroom,FALSE,None,Playroom,FALSE,None
+590,2023-06-24,1,Upstairs family room,FALSE,None,None,None,None
+591,2023-06-30,2,Living room,FALSE,None,Child bedroom,FALSE,None
+592,2023-07-06,1,Living room,FALSE,None,None,None,None
+595,2023-07-19,1,Child bedroom,FALSE,None,None,None,None
+596,2023-07-22,1,Living room,FALSE,None,None,None,None
+597,2023-08-08,1,Living room,FALSE,None,None,None,None
+598,2023-08-10,1,Living room,FALSE,None,None,None,None
+600,2023-08-19,2,Child bedroom console,FALSE,None,Child bedroom desk,FALSE,None
+601,2023-09-01,1,Playroom,FALSE,None,None,None,None
+604,2023-09-08,2,Dining room,FALSE,None,Family bedroom,FALSE,None
+605,2023-09-19,2,Kitchen,FALSE,None,Living room,FALSE,None
+608,2023-09-20,1,Child bedroom,FALSE,None,None,None,None
