@@ -68,8 +68,8 @@ def interp_series(series, start_date, end_date, visualize=False):
     return merged_df
 
 if __name__ == "__main__":
-    file_path = '/home/akv/FLASH_PO1/techData/1440/P1-1440018_data/P1-1440018_tv_power_5s.csv'
-    start_date = '2024-06-18'
+    file_path = 'C:/Users/u255769/flash-post-processing/tv_data/data/P1-1489/P1-1489013_data/P1-1489013_data/P1-1489013_tv_power_5s.csv'
+    start_date = '2024-08-27'
     num_days = 5
     end_date = pd.to_datetime(start_date) + timedelta(days=num_days-1)
     
@@ -99,6 +99,6 @@ if __name__ == "__main__":
     days = days.set_index(['time'])
 
     #print(days)
-    days.plot(figsize=(13, 4.5), subplots=True, legend=False, ylim=(-2,70))
+    days.plot(figsize=(13, 4.5), subplots=True, legend=False, ylim=(-2,50))
     plt.savefig(file_path.split('/')[-1][:-4]+'.png')
     #plt.show()

@@ -1,107 +1,142 @@
-import os
+import os 
 import sys
 
-import numpy as np
+import numpy as np 
 import pandas as pd
 import yaml
 
 from datetime import timedelta
 
-# Define paths
-path_mobile = 'flash-post-processing\code_mobile' #Replace with full path name 
-mobile_details = 'flash-post-processing\code_mobilestudy4_mobile_details.csv' #Replace with full path name
-num_days = 3
+path_mobile = 'C:\\Users\\u255769\\flash-post-processing\\mobile_data\\processed_data'
 
-# Load data
+mobile_details = 'C:\\Users\\u255769\\flash-post-processing\\mobile_data\\study4_mobile_details.csv'
+num_days=3
+
 df = pd.read_csv(mobile_details, delimiter=',')
-df = df[df['mobile_count'] > 0]
+df = df[df['mobile_count']>0]
 
-def process_mobile_data(row, num_days, path_mobile):
+android_compliance = []
+for idx in df.index:
+    row = df.loc[idx]
     ppt = row['ppt_id']
     start_date = row['start_date']
     type_ = row['mobile_type']
+    count = row['mobile_count']
+    csv_path = None
+    
+    if type_ == 'Android':
+        csv_path = '%s/%s_chronicle_android.csv'%(path_mobile,str(ppt))
 
-    # Determine csv path based on mobile type
-    if type_.lower() == 'android':
-        csv_path = f'{path_mobile}/{ppt}_chronicle_android.csv'
-        save_path = f'{path_mobile}/{ppt}_android_final.csv'
-    elif type_.lower() == 'ios':
-        csv_path = f'{path_mobile}/{ppt}_chronicle_ios.csv'
-        save_path = f'{path_mobile}/{ppt}_ios_final.csv'
-    elif type_.lower() == 'ipad':
-        csv_path = f'{path_mobile}/{ppt}_chronicle_ipad.csv'
-        save_path = f'{path_mobile}/{ppt}_ipad_final.csv'
-    else:
-        print(f"Unknown mobile type: {type_}")
-        return None
+        csv_path = None 
+        save_path = '%s/%s_android_final.csv'%(path_mobile,str(ppt))
+        
+        
+    if type_ == 'iPhone':
+        csv_path = '%s/%s_chronicle_ios.csv'%(path_mobile,str(ppt))
+        
+        csv_path = None
+       
+        if ppt == 591:
+            csv_path = None
+       
+        save_path = '%s/%s_iphone_final.csv'%(path_mobile,str(ppt))
 
-    # Load mobile data
+    if type_ == 'iPad':
+        csv_path = '%s/%s_ipad_data.csv'%(path_mobile,str(ppt))
+        if ppt in [598]:
+            csv_path = None
+        save_path = '%s/%s_ipad_final.csv'%(path_mobile,str(ppt))
+        csv_path = None
+        
+    if csv_path == None:
+        continue
+        
+    
+    print(row)            
     m_df = pd.read_csv(csv_path, delimiter=',')
+    if 'iPhone' in type_ or 'iPad' in type_:
+        m_df['event_timestamp'] = m_df['date'] + ' ' + m_df['start_timestamp']
+    
     m_df['event_timestamp'] = pd.to_datetime(m_df['event_timestamp']).dt.tz_localize(None)
 
     m_df.sort_values('event_timestamp', inplace=True)
     m_df.set_index('event_timestamp', inplace=True)
-
-    # Filter data within the given date range
-    start_dts = pd.to_datetime(start_date)
-    end_dts = start_dts + timedelta(days=num_days-1, hours=23, minutes=59, seconds=59)
+    
+    start_dts = pd.to_datetime(start_date) #+ timedelta(days=day)
+    end_dts = start_dts + timedelta(days=num_days-1,hours=23,minutes=59,seconds=59)
+    
     m_df = m_df[start_dts:end_dts]
     if 'index' in m_df.columns:
-        m_df.drop(columns=['index'], inplace=True)
-    m_df['username'] = m_df['username'].astype(str).apply(lambda x: "None" if x == "nan" else x)
-
-    # Save filtered data
-    m_df_without_other_use = m_df[m_df['username'] != 'Other']
-    m_df_without_other_use.to_csv(save_path, sep=',')
-
-    return m_df, start_date
-
-def calculate_compliance(m_df, start_date, num_days):
-    compliance_data = []
+        m_df.drop(columns=['index'],inplace=True)
+        
+    m_df.username = m_df.username.astype(str)
+    m_df.username = m_df.username.apply(lambda x : "None" if x=="nan" else x)
+    m_df_without_other_use = m_df[m_df.username!='Other']
+    m_df_without_other_use.to_csv(save_path, sep=',') 
+    
+    android_compliance_data = []
+    if type_=='Android':
+        android_compliance_data.append(ppt)
+        
     for day_ in range(num_days):
-        start_dts = pd.to_datetime(start_date) + timedelta(days=day_, hours=0, minutes=0, seconds=0)
-        end_dts = start_dts + timedelta(hours=23, minutes=59, seconds=59)
+        start_dts = pd.to_datetime(start_date) #+ timedelta(days=day)
+        
+        start_dts = start_dts + timedelta(days=day_,hours=0,minutes=0,seconds=0)
+        end_dts = start_dts + timedelta(hours=23,minutes=59,seconds=59)
+    
         m_df_day = m_df[start_dts:end_dts]
+        #print(m_df_day)
+        
+        m_df1 = m_df_day[m_df_day['username'].str.lower()=='target child']
+        m_df2 = m_df_day[m_df_day['username'].str.lower()=='none']
+        m_df3 = m_df_day[m_df_day['username'].str.lower()=='other']
+        
+        start_ts = pd.to_datetime(m_df1['date'] + ' ' + m_df1['start_timestamp'])
+        stop_ts = pd.to_datetime(m_df1['date'] + ' ' + m_df1['stop_timestamp'])
+        tc_duration = (stop_ts - start_ts).dt.total_seconds()
+        tc_duration = tc_duration.clip(lower=0).sum()
 
-        tc_duration, un_duration, ot_duration = 0, 0, 0
 
-        for username in ['target child', 'none', 'other']:
-            duration = 0
-            start_ts = pd.to_datetime(m_df_day.loc[m_df_day['username'].str.lower() == username, 'date'] + ' ' + m_df_day.loc[m_df_day['username'].str.lower() == username, 'start_timestamp'])
-            stop_ts = pd.to_datetime(m_df_day.loc[m_df_day['username'].str.lower() == username, 'date'] + ' ' + m_df_day.loc[m_df_day['username'].str.lower() == username, 'stop_timestamp'])
-            duration = (stop_ts - start_ts).dt.total_seconds().sum()
-            assert duration >= 0
+        print(tc_duration)
+        #print(tc_duration[tc_duration<0])
+        
+        tc_duration = tc_duration.sum()
+        assert tc_duration>=0
 
-            if username == 'target child':
-                tc_duration = duration
-            elif username == 'none':
-                un_duration = duration
-            elif username == 'other':
-                ot_duration = duration
+        #print(tc_duration/60.0)
+        
+        start_ts = pd.to_datetime(m_df2['date'] + ' ' + m_df2['start_timestamp'])
+        stop_ts = pd.to_datetime(m_df2['date'] + ' ' + m_df2['stop_timestamp'])
+        un_duration = (stop_ts - start_ts).dt.total_seconds()
+        un_duration = un_duration.sum()
+        assert un_duration>=0
+        #print(un_duration/60.0)
 
+
+        start_ts = pd.to_datetime(m_df3['date'] + ' ' + m_df3['start_timestamp'])
+        stop_ts = pd.to_datetime(m_df3['date'] + ' ' + m_df3['stop_timestamp'])
+        ot_duration = (stop_ts - start_ts).dt.total_seconds()
+        ot_duration = ot_duration.sum()
+        assert ot_duration>=0
+        
+        #print(ot_duration/60.0)
+        #print(tc_duration, un_duration, ot_duration)
+        
         known_use = tc_duration + ot_duration
         total_use = known_use + un_duration
-        if total_use > 0:
-            compliance = 100 * (known_use / total_use)
-        else:
-            compliance = 0
-        print(f'Day-{day_+1:02d}, Compliance: {compliance:.1f}, TC use (mins): {tc_duration / 60:.1f}, Un use (mins): {un_duration / 60:.1f}')
-        compliance_data.append(compliance)
+        compliance = 100 * (known_use / total_use)
+        
+        print('Day-%02d, Compliance: %.1f, TC use (mins): %.1f, Un use (mins): %.1f'%(day_+1, compliance, tc_duration/60, un_duration/60))
+        
+        if type_=='Android':
+            android_compliance_data.append(compliance)
+            
+    android_compliance.append(android_compliance_data)
+    
+#print(android_compliance)
 
-    return compliance_data
-
-compliance_data_all = []
-
-for idx, row in df.iterrows():
-    result = process_mobile_data(row, num_days, path_mobile)
-    if result:
-        m_df, start_date = result
-        compliance_data = calculate_compliance(m_df, start_date, num_days)
-        compliance_data_all.append([row['ppt_id'], row['mobile_type']] + compliance_data)
-
-# Save all compliance data
-columns = ['FamID', 'MobileType'] + [f'Day-{i+1:02d}' for i in range(num_days)]
-df_compliance_all = pd.DataFrame(compliance_data_all, columns=columns)
-df_compliance_all.index.name = 'Index'
-print(df_compliance_all)
-df_compliance_all.to_csv('compliance_all_types.csv', sep=',')
+df_compliance = pd.DataFrame(android_compliance)
+df_compliance.columns = ['FamID'] + ['Day-%02d'%(i+1) for i in range(num_days)]
+df_compliance.index.name = 'Index'
+print(df_compliance)
+df_compliance.to_csv('android_compliance.csv',sep=',')

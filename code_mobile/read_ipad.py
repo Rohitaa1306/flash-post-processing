@@ -13,10 +13,11 @@ def convert_secs(time):
     #print(time, h,m,s, n)
     return n
 
-ppt = '577'
-start_date = '2023-03-23'
+ppt = '608'
+start_date = '2023-09-20'
 
-d = pd.read_excel('/home/akv/FLASH_PO1/study4Data/mobile_data/Screen Time FLASH '+ppt+'.xlsx')
+d = pd.read_excel('C:\\Users\\u255769\\flash-post-processing\\mobile_data\\raw_data\\Screen Time FLASH '+ppt+'.xlsx')
+
 save_name = ppt+'_ipad_data.csv'
 
 d['Date'] = pd.to_datetime(d['Date'])
