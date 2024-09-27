@@ -92,9 +92,6 @@ def main(base_path, ppt_id):
   
     gz_df = gz_df.loc[reg_df.index]
 
-    gz_df_1 = gz_df[gz_df['TC_gaze'] == 1]
-    print(len(gz_df_1))
-    
     return gz_df
 
 if __name__ == "__main__":
