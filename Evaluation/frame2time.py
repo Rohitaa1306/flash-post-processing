@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
-start_time = "2023-09-25 12:51:17"
+start_time = "2023-09-25 12:54:08"
 fps = 30
 file_path = 'C:\\Users\\u255769\\Downloads\\Evaluation\\606_tc_gaze_epoch_5s_30fps.txt'
 
@@ -15,5 +15,6 @@ new_time_range = pd.date_range(start=start_time, end=data.index.max(), freq='2S'
 result = data.reindex(new_time_range, method='ffill').reset_index()
 count_category_1 = result[result['Category'] == 1.0].shape[0]
 
-print(result)
-print(f"Number of rows with Category 1.0: {count_category_1}")
+print(count_category_1)
+result.to_csv('C:\\Users\\u255769\\Downloads\\Evaluation\\output_vatic.csv')
+
