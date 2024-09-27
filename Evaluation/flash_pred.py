@@ -2,12 +2,13 @@ import pandas as pd
 
 file_path = 'C:\\Users\\u255769\\Downloads\\Evaluation\\606_flash_tvdata.txt'
 df = pd.read_csv(file_path)
-df['timestamp'] = pd.to_datetime(df['timestamp'])
-flash_1_df = df[df['flash_prediction'] == 1]
+gz_df = df[df['flash_prediction'] == 1]
+print(len(gz_df))
 
-if not flash_1_df.empty:
-    total_time = (flash_1_df['timestamp'].iloc[-1] - flash_1_df['timestamp'].iloc[0]).total_seconds()
-else:
-    total_time = 0  
+file_path_1 = 'C:\\Users\\u255769\\Downloads\\Evaluation\\output.csv'
+df_1 = pd.read_csv(file_path_1)
+gz_df_1 = df_1[df_1['TC_gaze'] == 1]
+filtered_gz_df_1 = gz_df_1[gz_df_1['dateTimeStamp'] <= '2023-09-25 14:01:52']
+print(len(filtered_gz_df_1))
 
-print(f"Total time where flash_prediction was 1: {total_time} seconds")
+

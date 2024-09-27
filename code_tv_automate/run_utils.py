@@ -36,8 +36,8 @@ def rand_day_check(start_date, df, num_days=10):
 def get_tv_data(ppt_data, tv_config, tv_count):
     dev_ids = []
     tvdev_data = {}
-    for i in range(tv_count):
-        i = i+1
+    for i in range(1, tv_count+1):
+        #i = i+1
         
         dict_ = {} # devid, location, meeasurements
         dict_['id'] = ppt_data.iloc[0]['flash'+str(i)]
@@ -56,7 +56,7 @@ def get_tv_data(ppt_data, tv_config, tv_count):
         for key in tv_config.keys():
             if tv_config[key]['device_id'] == dev_id:
                 dict_['config'] = tv_config[key]
-                
+                                
         tvdev_data[i-1] = dict_
         dev_ids.append(int(dev_id))
     

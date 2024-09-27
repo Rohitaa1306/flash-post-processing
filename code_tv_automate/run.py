@@ -7,6 +7,9 @@ import argparse
 import time
 import yaml 
 import numpy as np 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 import pandas as pd
 from pathlib import Path
 from utils import * 
@@ -40,6 +43,8 @@ if not ppt_ids:
 print(f"Participant IDs: {ppt_ids}")
 
 for ppt_id in ppt_ids:
+    #if ppt_id!='1489':
+        #continue
     formatted_ppt_id = f"P1-{ppt_id}"    
     print(f"Processing Participant ID: {formatted_ppt_id}")
 
@@ -61,7 +66,8 @@ for ppt_id in ppt_ids:
         tv_count = tv_count_ls[tv_count-1]
 
         with open('%s/input/configs/%s.yaml'%(args.base_path,ppt_id)) as stream:
-            tv_config = yaml.safe_load(stream)    
+            tv_config = yaml.safe_load(stream)
+
     else:
         num_days = 3
         with open('../../tech_data_post_processed/input/configs/%s.yaml'%ppt_id) as stream:
@@ -92,7 +98,6 @@ for ppt_id in ppt_ids:
             tv_data = tvdev_data[each_tv]
             print('######################### Device processing ##############################')
             print('Processing TV-%d, Device ID: %s\n'%(each_tv+1, dev_ids_[each_tv]))
-            
             print(tv_data)
             
             exclude = tv_data['config']['exclude']

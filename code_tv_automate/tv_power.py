@@ -68,8 +68,8 @@ def interp_series(series, start_date, end_date, visualize=False):
     return merged_df
 
 if __name__ == "__main__":
-    file_path = 'C:\\Users\\u255769\\flash-post-processing\\tv_data\\data\\P1-1390\\P1-1390016_data\\P1-1390016_data\\P1-1390016_tv_power_5s.csv'
-    start_date = '2024-05-31'
+    file_path = 'C:\\Users\\u255769\\tv_mobile_data\\tv_data\\data\\P1-1559\\P1-1559014_data\\P1-1559014_data\\P1-1559014_tv_power_5s.csv'
+    start_date = '2024-09-14'
     num_days = 5
     end_date = pd.to_datetime(start_date) + timedelta(days=num_days-1)
     
