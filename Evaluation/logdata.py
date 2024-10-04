@@ -4,6 +4,32 @@ import numpy as np
 from datetime import datetime
 from gaze_estimate import correct_rotation, convert_to_gaze, convert_lims
 
+def epoch_vote(arr):
+    votes = [(arr==0).sum(), (arr==1).sum(), (arr==2).sum(), (arr==3).sum()]
+    idx = np.argmax(votes)
+    val = votes[idx]
+    
+    if val >= 3:
+        return idx
+    else:
+        return 0 
+
+def condense_epc(tv_time, tv_exp_only):
+    assert tv_time.shape == tv_exp_only.shape
+    #assert tv_time.size == 86400
+    
+    trim_size = tv_time.size % 5
+    if trim_size != 0:
+        tv_time = tv_time[:-trim_size]
+        tv_exp_only = tv_exp_only[:-trim_size]
+
+    tv_time = tv_time.reshape(-1,5)    
+    tv_exp_only = tv_exp_only.reshape(-1,5)
+    
+    tv_time_epc = np.apply_along_axis(epoch_vote, axis=1, arr=tv_time)
+    tv_exp_only_epc = np.apply_along_axis(epoch_vote, axis=1, arr=tv_exp_only)
+    return tv_time_epc, tv_exp_only_epc
+
 def main(base_path, ppt_id):
     
     reg_file = os.path.join(base_path, f"{ppt_id}_reg.txt")   
@@ -88,11 +114,39 @@ def main(base_path, ppt_id):
         gz_df.loc[inc_index,'TC_exposure_only'] = tc_exp_only[:len(inc_index)]
     except KeyError:
         pass 
+
     gz_df[gz_df==5] = 0
   
-    gz_df = gz_df.loc[reg_df.index]
+    #gz_df = gz_df.loc[reg_df.index]
 
-    return gz_df
+    tv_data = gz_df[['TC_gaze','TC_exposure_only']].values
+    tv_time_sec = (tv_data[:,0]==1).sum()/60.0
+    tv_exp_only_sec = (tv_data[:,1]==1).sum()/60.0
+
+    tv_time = tv_data[:,0]
+    tv_exp_only = tv_data[:,1]
+    tv_time_epc, tv_exp_only_epc = condense_epc(tv_time, tv_exp_only)
+    
+    # flash per epoch tv data
+    gz_epoch_index = pd.date_range(start=start_date_str, end=end_date_str, freq='5S')
+    gz_epc_df = pd.DataFrame(index=gz_epoch_index)
+    
+    if len(gz_epoch_index) != len(tv_time_epc):
+        min_len = min(len(gz_epoch_index), len(tv_time_epc))
+        gz_epoch_index = gz_epoch_index[:min_len]
+        tv_time_epc = tv_time_epc[:min_len]
+        tv_exp_only_epc = tv_exp_only_epc[:min_len]
+
+    gz_epc_df.loc[gz_epoch_index, 'TC_gaze'] = tv_time_epc
+    gz_epc_df.loc[gz_epoch_index, 'TC_exposure_only'] = tv_exp_only_epc
+    
+    tt = (tv_time_epc==1).sum()*5/60.0
+    eo = (tv_exp_only_epc==1).sum()*5/60.0
+    
+    print('TV time: \t%.2f'%tt)
+    print('TV exponly: \t%.2f'%eo)
+
+    return gz_epc_df
 
 if __name__ == "__main__":
     base_path = 'C:\\Users\\u255769\\Downloads\\Evaluation\\txts'

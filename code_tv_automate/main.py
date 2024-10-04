@@ -127,8 +127,16 @@ def main(base_path, ppt_id, start_date, tv_data, num_days=10, study4=False):
             if df_.shape[0]>0:
                 phi_ = df_[['phi','theta','rot.']].values #['phi','theta','rot.'] 
                 phi_corrected = correct_rotation(phi_)
+                # print(phi_corrected)
+                # print(len(phi_corrected))
+                # print(len(df_['phi'].values))
+                # print(len(df_['theta'].values))
+                # print(len(phi_corrected[:,:2]))
+                # print(reg_df.loc[df_.index,['phi','theta']].shape[0])
+                # print(reg_df.loc[df_.index,['phi','theta']])
+
                 reg_df.loc[df_.index,['phi','theta']] = phi_corrected[:,:2]
-            
+                 
 
             #0 = No-Gz (flash pred) Gaze-no-det, TC not present    
             df_ = rot_df[rot_df['tag']=='Gaze-no-det']
