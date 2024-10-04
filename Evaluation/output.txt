@@ -1,4 +1,4 @@
-,TC_gaze,TC_exposure_only
+dateTimeStamp,TC_gaze,TC_exposure_only
 2023-09-25 12:51:17,0,1
 2023-09-25 12:51:18,0,0
 2023-09-25 12:51:19,0,1

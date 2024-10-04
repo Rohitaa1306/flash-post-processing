@@ -143,14 +143,15 @@ def main(base_path, ppt_id):
     tt = (tv_time_epc==1).sum()*5/60.0
     eo = (tv_exp_only_epc==1).sum()*5/60.0
     
-    print('TV time: \t%.2f'%tt)
-    print('TV exponly: \t%.2f'%eo)
+    #print('TV time: \t%.2f'%tt)
+    #print('TV exponly: \t%.2f'%eo)
 
-    return gz_epc_df
+    return gz_df, gz_epc_df
 
 if __name__ == "__main__":
-    base_path = 'C:\\Users\\u255769\\Downloads\\Evaluation\\txts'
+    base_path = 'C:\\Users\\u255769\\flash-post-processing\\Evaluation\\txts'
     ppt_id = 606
     ppt_id = str(ppt_id)
-    gaze_dfs = main(base_path, ppt_id)
-    gaze_dfs.to_csv('C:\\Users\\u255769\\Downloads\\Evaluation\\output.csv')
+    gaze_dfs, gaze_epoch_dfs = main(base_path, ppt_id)
+    gaze_dfs.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output.csv')
+    gaze_epoch_dfs.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_epoch_condensed.csv')

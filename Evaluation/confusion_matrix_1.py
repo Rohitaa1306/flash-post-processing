@@ -11,9 +11,9 @@ df_my_pred['dateTimeStamp'] = pd.to_datetime(df_my_pred['dateTimeStamp'])
 df_flash_pred['timestamp'] = pd.to_datetime(df_flash_pred['timestamp']).dt.floor('S') 
 
 merged_data = pd.merge(df_my_pred, df_flash_pred, left_on='dateTimeStamp', right_on='timestamp', how='inner')
-merged_data['Gold_standard'] = merged_data['Gold_standard'].map({1: 1, 0: 0, 2: 0, 5: 0})
+merged_data['flash_prediction'] = merged_data['flash_prediction'].map({1: 1, 0: 0, 2: 0, 5: 0})
 
-cm = confusion_matrix(merged_data['TC_gaze'], merged_data['Gold_standard'])
+cm = confusion_matrix(merged_data['TC_gaze'], merged_data['flash_prediction'])
 
 TN, FP, FN, TP = cm.ravel()
 
@@ -22,7 +22,7 @@ specificity = TN / (TN + FP)
 accuracy = (TP + TN) / (TP + TN + FP + FN)
 
 true_label = 'TC_gaze'
-predicted_label = 'Gold_standard'
+predicted_label = 'flash_prediction'
 
 print(f"Confusion Matrix: {true_label} vs {predicted_label}")
 print(f"                      {predicted_label} = 0   {predicted_label} = 1")
@@ -40,9 +40,9 @@ df_my_pred['dateTimeStamp'] = pd.to_datetime(df_my_pred['dateTimeStamp'])
 df_flash_pred['timestamp'] = pd.to_datetime(df_flash_pred['timestamp']).dt.floor('S') 
 
 merged_data = pd.merge(df_my_pred, df_flash_pred, left_on='dateTimeStamp', right_on='timestamp', how='inner')
-merged_data['Gold_standard'] = merged_data['Gold_standard'].map({1: 1, 0: 0, 2: 0, 5: 0})
+merged_data['flash_prediction'] = merged_data['flash_prediction'].map({1: 1, 0: 0, 2: 0, 5: 0})
 
-cm = confusion_matrix(merged_data['TC_gaze'], merged_data['Gold_standard'])
+cm = confusion_matrix(merged_data['TC_gaze'], merged_data['flash_prediction'])
 
 TN, FP, FN, TP = cm.ravel()
 
@@ -51,7 +51,7 @@ specificity = TN / (TN + FP)
 accuracy = (TP + TN) / (TP + TN + FP + FN)
 
 true_label = 'TC_gaze'
-predicted_label = 'Gold_standard'
+predicted_label = 'flash_prediction'
 
 print(f"Confusion Matrix: {true_label} vs {predicted_label}")
 print(f"                      {predicted_label} = 0   {predicted_label} = 1")
