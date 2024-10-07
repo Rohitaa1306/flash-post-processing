@@ -116,16 +116,25 @@ def main(base_path, ppt_id):
         pass 
 
     gz_df[gz_df==5] = 0
-  
-    #gz_df = gz_df.loc[reg_df.index]
+    #print(gz_df)
+    
+    gz_df_2 = gz_df.loc[reg_df.index]
+    #print(gz_df_2)
 
     tv_data = gz_df[['TC_gaze','TC_exposure_only']].values
+    #print(tv_data)
     tv_time_sec = (tv_data[:,0]==1).sum()/60.0
     tv_exp_only_sec = (tv_data[:,1]==1).sum()/60.0
+    #print(tv_time_sec)
+    #print(tv_exp_only_sec)
 
     tv_time = tv_data[:,0]
     tv_exp_only = tv_data[:,1]
+    #print(tv_time.shape)
+    #print(tv_exp_only.shape)
     tv_time_epc, tv_exp_only_epc = condense_epc(tv_time, tv_exp_only)
+    #print(tv_time_epc.shape)
+    #print(tv_exp_only_epc.shape)
     
     # flash per epoch tv data
     gz_epoch_index = pd.date_range(start=start_date_str, end=end_date_str, freq='5S')
@@ -139,6 +148,8 @@ def main(base_path, ppt_id):
 
     gz_epc_df.loc[gz_epoch_index, 'TC_gaze'] = tv_time_epc
     gz_epc_df.loc[gz_epoch_index, 'TC_exposure_only'] = tv_exp_only_epc
+
+    #print(gz_epc_df.shape)
     
     tt = (tv_time_epc==1).sum()*5/60.0
     eo = (tv_exp_only_epc==1).sum()*5/60.0
@@ -146,12 +157,13 @@ def main(base_path, ppt_id):
     #print('TV time: \t%.2f'%tt)
     #print('TV exponly: \t%.2f'%eo)
 
-    return gz_df, gz_epc_df
+    return gz_df, gz_df_2, gz_epc_df
 
 if __name__ == "__main__":
     base_path = 'C:\\Users\\u255769\\flash-post-processing\\Evaluation\\txts'
     ppt_id = 606
     ppt_id = str(ppt_id)
-    gaze_dfs, gaze_epoch_dfs = main(base_path, ppt_id)
-    gaze_dfs.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output.csv')
-    gaze_epoch_dfs.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_epoch_condensed.csv')
+    gaze_dfs_1, gaze_dfs_2, gaze_dfs_5 = main(base_path, ppt_id)
+    gaze_dfs_1.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_1.csv')
+    gaze_dfs_2.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_2.csv') #check sample size
+    gaze_dfs_5.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_5.csv')
