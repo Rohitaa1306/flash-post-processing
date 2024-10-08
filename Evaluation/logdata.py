@@ -162,6 +162,6 @@ if __name__ == "__main__":
     base_path = 'C:\\Users\\u255769\\flash-post-processing\\Evaluation\\txts'
     ppt_id = 606
     ppt_id = str(ppt_id)
-    gaze_dfs_1, gaze_dfs_2, gaze_dfs_5 = main(base_path, ppt_id)
+    gaze_dfs_1, gaze_dfs_5 = main(base_path, ppt_id)
     gaze_dfs_1.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_1.csv')
     gaze_dfs_5.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_5.csv')

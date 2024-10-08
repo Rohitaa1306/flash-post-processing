@@ -90,7 +90,7 @@ x = x.reshape(-1)
 def convert_lims(tv_data):
 
     #load lims
-    loc_lims = np.load('C:\\Users\\u255769\\Downloads\\Evaluation\\4331_v3r50reg_reg_testlims_35_53_7_9.npy')
+    loc_lims = np.load('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\4331_v3r50reg_reg_testlims_35_53_7_9.npy')
     loc_lims = loc_lims.reshape(-1,4)
 
     drl = (loc_lims[:,1]-loc_lims[:,0])/2.0
