@@ -41,10 +41,5 @@ if cm.shape == (2, 2):
 
 gaze_pred_1 = merged_data[(merged_data['TC_gaze'] == 1)]
 gaze_1 = merged_data[(merged_data['Category'] == 1)]
-total_time_gt = gaze_1['timestamp'].diff().sum()
-total_time_pred = gaze_pred_1['timestamp'].diff().sum()
-total_time_gt_mins = total_time_gt.total_seconds() / 60
-total_time_pred_mins = total_time_pred.total_seconds() / 60
-
-print(f"Total time where TC_gaze is 1: {total_time_pred_mins} minutes")
-print(f"Total time where Category is 1: {total_time_gt_mins} minutes")
+print(f"Total gaze time (FLASH) is : {gaze_1.shape[0]*5} seconds")
+print(f"Total gaze time (Gold Standard) is : {gaze_pred_1.shape[0]*5} seconds")

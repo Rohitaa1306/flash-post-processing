@@ -118,11 +118,9 @@ def main(base_path, ppt_id):
     gz_df[gz_df==5] = 0
     #print(gz_df)
     
-    gz_df_2 = gz_df.loc[reg_df.index]
-    #print(gz_df_2)
-
     tv_data = gz_df[['TC_gaze','TC_exposure_only']].values
     #print(tv_data)
+
     tv_time_sec = (tv_data[:,0]==1).sum()/60.0
     tv_exp_only_sec = (tv_data[:,1]==1).sum()/60.0
     #print(tv_time_sec)
@@ -132,6 +130,7 @@ def main(base_path, ppt_id):
     tv_exp_only = tv_data[:,1]
     #print(tv_time.shape)
     #print(tv_exp_only.shape)
+    
     tv_time_epc, tv_exp_only_epc = condense_epc(tv_time, tv_exp_only)
     #print(tv_time_epc.shape)
     #print(tv_exp_only_epc.shape)
@@ -157,7 +156,7 @@ def main(base_path, ppt_id):
     #print('TV time: \t%.2f'%tt)
     #print('TV exponly: \t%.2f'%eo)
 
-    return gz_df, gz_df_2, gz_epc_df
+    return gz_df, gz_epc_df
 
 if __name__ == "__main__":
     base_path = 'C:\\Users\\u255769\\flash-post-processing\\Evaluation\\txts'
@@ -165,5 +164,4 @@ if __name__ == "__main__":
     ppt_id = str(ppt_id)
     gaze_dfs_1, gaze_dfs_2, gaze_dfs_5 = main(base_path, ppt_id)
     gaze_dfs_1.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_1.csv')
-    gaze_dfs_2.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_2.csv') #check sample size
     gaze_dfs_5.to_csv('C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_5.csv')
