@@ -97,69 +97,45 @@ def main(base_path, ppt_id):
 
     gz_df.loc[df_1.index, "TC_gaze"] = pred_gz
     inc_index = df_1.index + pd.Timedelta(seconds=1)
-    #print(inc_index)
-    #print(gz_df)
-    #print((gz_df["TC_gaze"] == 1).sum())
-    
     inc_index = inc_index[:-1]
     gz_df.loc[inc_index, "TC_gaze"] = pred_gz[: len(inc_index)]
-    
-    #print((gz_df["TC_gaze"] == 1).sum())
-
     gz_df.loc[df_1.index, "TC_exposure_only"] = tc_exp_only
     gz_df.loc[inc_index, "TC_exposure_only"] = tc_exp_only[: len(inc_index)]
-    
     gz_df[gz_df == 5] = 0
-    # print(gz_df)
 
     tv_data = gz_df[["TC_gaze", "TC_exposure_only"]].values
-    # print(tv_data)
 
     tv_time_sec = (tv_data[:, 0] == 1).sum() / 60.0
     tv_exp_only_sec = (tv_data[:, 1] == 1).sum() / 60.0
-    # print(tv_time_sec)
-    # print(tv_exp_only_sec)
 
     tv_time = tv_data[:, 0]
     tv_exp_only = tv_data[:, 1]
-    # print(tv_time.shape)
-    # print(tv_exp_only.shape)
-
     tv_time_epc, tv_exp_only_epc = condense_epc(tv_time, tv_exp_only)
-    # print(tv_time_epc.shape)
-    # print(tv_exp_only_epc.shape)
 
     # flash per epoch tv data
-    gz_epoch_index = pd.date_range(start=start_date_str, end=end_date_str, freq="5S")
-    gz_epc_df = pd.DataFrame(index=gz_epoch_index)
-    #print(gz_epc_df)
+    # gz_epoch_index = pd.date_range(start=start_date_str, end=end_date_str, freq="5S")
+    # gz_epc_df = pd.DataFrame(index=gz_epoch_index)
 
-    if len(gz_epoch_index) != len(tv_time_epc):
-        min_len = min(len(gz_epoch_index), len(tv_time_epc))
-        gz_epoch_index = gz_epoch_index[:min_len]
-        tv_time_epc = tv_time_epc[:min_len]
-        tv_exp_only_epc = tv_exp_only_epc[:min_len]
+    # if len(gz_epoch_index) != len(tv_time_epc):
+    #     min_len = min(len(gz_epoch_index), len(tv_time_epc))
+    #     gz_epoch_index = gz_epoch_index[:min_len]
+    #     tv_time_epc = tv_time_epc[:min_len]
+    #     tv_exp_only_epc = tv_exp_only_epc[:min_len]
 
-    gz_epc_df.loc[gz_epoch_index, "TC_gaze"] = tv_time_epc
-    gz_epc_df.loc[gz_epoch_index, "TC_exposure_only"] = tv_exp_only_epc
+    # gz_epc_df.loc[gz_epoch_index, "TC_gaze"] = tv_time_epc
+    # gz_epc_df.loc[gz_epoch_index, "TC_exposure_only"] = tv_exp_only_epc
 
+    # tt = (tv_time_epc == 1).sum() * 5 / 60.0
+    # eo = (tv_exp_only_epc == 1).sum() * 5 / 60.0
 
-    # print(gz_epc_df.shape)
-
-    tt = (tv_time_epc == 1).sum() * 5 / 60.0
-    eo = (tv_exp_only_epc == 1).sum() * 5 / 60.0
-
-    # print('TV time: \t%.2f'%tt)
-    # print('TV exponly: \t%.2f'%eo)
-
-    return gz_df, gz_epc_df
+    return gz_df 
 
 if __name__ == "__main__":
     base_path = "C:\\Users\\u255769\\flash-post-processing\\Evaluation\\txts"
     ppt_id = 606
     ppt_id = str(ppt_id)
-    gaze_dfs_1, gaze_dfs_5 = main(base_path, ppt_id)
+    gaze_dfs_1 = main(base_path, ppt_id)
     gaze_dfs_1.index.name = 'timestamp'
-    gaze_dfs_5.index.name = 'timestamp'
+    #gaze_dfs_5.index.name = 'timestamp'
     gaze_dfs_1.to_csv("C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_1.csv")
-    gaze_dfs_5.to_csv("C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_5.csv")
+    #gaze_dfs_5.to_csv("C:\\Users\\u255769\\flash-post-processing\\Evaluation\\output_5.csv")
